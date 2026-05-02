@@ -1,12 +1,14 @@
 import express from "express"
 import dotenv from "dotenv"
 dotenv.config()
+import dns from "dns"
 import connectDb from "./config/db.js"
 import authRouter from "./routes/auth.routes.js"
 import cors from "cors"
 import cookieParser from "cookie-parser"
 import userRouter from "./routes/user.routes.js"
 
+dns.setServers(["1.1.1.1", "8.8.8.8"])
 const app=express()
 app.use(cors({
     origin:"http://localhost:5173",

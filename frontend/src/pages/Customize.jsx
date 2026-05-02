@@ -5,7 +5,7 @@ const Customize = () => {
     <div className='w-full h-[100vh] bg-gradient-to-t from-black to-[#030353]'>
       customize
     </div>
-  )
+  ) 
 }
 
 export default Customize
