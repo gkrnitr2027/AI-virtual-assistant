@@ -1,11 +1,120 @@
-import React from 'react'
+import React, { useContext, useRef, useEffect } from 'react'
+import Card from '../components/Card'
+import image1 from "../assets/image1.png"
+import image2 from "../assets/image2.jpg"
+import image3 from "../assets/authBg.png"
+import image4 from "../assets/image4.png"
+import image5 from "../assets/image5.png"
+import image6 from "../assets/image6.jpeg"
+import image7 from "../assets/image7.jpeg"
+import { IoMdCloudUpload } from "react-icons/io";
+import { userDataContext } from '../context/UserContext'
+import { useNavigate } from 'react-router-dom'
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 const Customize = () => {
+  const navigate = useNavigate()
+
+  const {
+    backendImage,
+    setbackendImage,
+    frontendImage,
+    setFrontendImage,
+    selectedImage,
+    setSelectedImage
+  } = useContext(userDataContext)
+
+  const inputImage = useRef()
+
+  const handleImage = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+
+    setbackendImage(file)
+
+    const preview = URL.createObjectURL(file)
+    setFrontendImage(preview)
+
+    // set selection only AFTER file is chosen
+    setSelectedImage("input")
+  }
+
+  // cleanup object URL (prevents memory leak)
+  useEffect(() => {
+    return () => {
+      if (frontendImage) {
+        URL.revokeObjectURL(frontendImage)
+      }
+    }
+  }, [frontendImage])
+
+  // check if valid image is selected
+  const isImageSelected =
+    (selectedImage && selectedImage !== "input") || frontendImage
+
   return (
-    <div className='w-full h-[100vh] bg-gradient-to-t from-black to-[#030353]'>
-      customize
+    <div className='w-full h-[100vh] bg-gradient-to-t from-black to-[#030353] flex justify-center items-center flex-col p-[20px] gap-[20px]'>
+      <IoMdArrowRoundBack className='absolute top-[30px] left-[30px] text-white w-[25px] h-[25px] cursor-pointer' onClick={()=>{
+                      navigate("/")
+                  }}/>
+
+      <h1 className='text-white mb-[40px] text-[30px] text-center'>
+        Select your assistance image
+      </h1>
+
+      <div className='w-full max-w-[60%] flex justify-center items-center flex-wrap gap-[15px]'>
+
+        <Card image={image1} />
+        <Card image={image2} />
+        <Card image={image3} />
+        <Card image={image4} />
+        <Card image={image5} />
+        <Card image={image6} />
+        <Card image={image7} />
+
+        {/* Upload Box */}
+        <div
+          className={`w-[150px] h-[250px] bg-[#030326] border-2 border-[#0000ff69] rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-blue-900 cursor-pointer hover:border-4 hover:border-white flex items-center justify-center ${
+            selectedImage === "input"
+              ? "border-4 border-white shadow-2xl shadow-blue-900"
+              : ""
+          }`}
+          onClick={() => inputImage.current.click()}
+        >
+          
+          {!frontendImage && (
+            <IoMdCloudUpload className='text-white w-[25px] h-[25px]' />
+          )}
+
+          {frontendImage && (
+            <img
+              src={frontendImage}
+              alt="preview"
+              className='h-full w-full object-cover'
+            />
+          )}
+
+          <input
+            type='file'
+            accept='image/*'
+            ref={inputImage}
+            hidden
+            onChange={handleImage}
+          />
+        </div>
+      </div>
+
+      {/* Next Button */}
+      {isImageSelected && (
+        <button
+          className='min-w-[150px] h-[60px] mt-[30px] bg-white rounded-full text-black font-semibold text-[19px]'
+          onClick={() => navigate("/customize2")}
+        >
+          Next
+        </button>
+      )}
     </div>
-  ) 
+  )
 }
 
 export default Customize
